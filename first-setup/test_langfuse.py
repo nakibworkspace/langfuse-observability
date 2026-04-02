@@ -3,8 +3,8 @@ from langfuse import Langfuse, observe
 
 # Your Langfuse Cloud keys from https://cloud.langfuse.com/settings/keys
 langfuse = Langfuse(
-    public_key="pk-lf-b1298a69-98f5-49d9-96a3-f4d5c8cd3ad3",
-    secret_key="sk-lf-810ef3d1-6cdc-45cf-bcf5-5b7b173758fb",
+    public_key="pk-...",
+    secret_key="sk-...",
     host="https://us.cloud.langfuse.com"
 )
 
