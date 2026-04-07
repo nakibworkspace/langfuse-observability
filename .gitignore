@@ -1,3 +1,4 @@
 .puku/
 .*md
 venv
+.env
