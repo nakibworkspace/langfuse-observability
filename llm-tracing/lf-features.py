@@ -1,5 +1,13 @@
-from langfuse.openai import openai
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Set env vars before importing langfuse.openai
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+os.environ["OPENAI_API_BASE"] = os.getenv("OPENAI_BASE_URL")
+
+from langfuse.openai import openai
 
 # This will now show up in your dashboard with full user tracking 
 completion = openai.chat.completions.create(

@@ -1,6 +1,5 @@
 from typing import List
 from pydantic import BaseModel
-from langfuse.openai import OpenAI
 import json
 import os
 from dotenv import load_dotenv
@@ -8,10 +7,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # MiniMax Configuration
+# Set env vars before importing langfuse.openai
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+os.environ["OPENAI_API_BASE"] = os.getenv("OPENAI_BASE_URL")
+
+from langfuse.openai import OpenAI
+
 # We initialize the client with MiniMax's endpoint
 client = OpenAI(
-    api_key=os.getenv("MINIMAX_API_KEY"),
-    base_url=os.getenv("MINIMAX_BASE_URL")
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url=os.getenv("OPENAI_BASE_URL")
 )
 
 # Pydantic Class

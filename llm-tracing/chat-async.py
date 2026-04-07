@@ -1,9 +1,14 @@
 import os
 import asyncio
-from langfuse.openai import AsyncOpenAI
-from dotenv import load_dotenv()
+from dotenv import load_dotenv
 
 load_dotenv()
+
+# Set env vars before importing langfuse.openai
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+os.environ["OPENAI_API_BASE"] = os.getenv("OPENAI_BASE_URL")
+
+from langfuse.openai import AsyncOpenAI
 
 async def main():
     # Async Client

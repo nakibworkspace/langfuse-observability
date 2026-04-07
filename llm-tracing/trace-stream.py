@@ -1,8 +1,13 @@
 import os
-from langfuse.openai import openai
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Set env vars before importing langfuse.openai
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+os.environ["OPENAI_API_BASE"] = os.getenv("OPENAI_BASE_URL")
+
+from langfuse.openai import openai
 
 # Streaming functionality.
 completion = openai.chat.completions.create(
