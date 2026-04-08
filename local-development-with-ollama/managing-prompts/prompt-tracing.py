@@ -62,7 +62,7 @@ client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
-@observe() # Starts the trace
+@observe() 
 def run_movie_critic():
     # 3. Fetch Prompt
     prompt = langfuse.get_prompt("movie-critic")
