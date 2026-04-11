@@ -22,14 +22,14 @@ langfuse = Langfuse()
 # Create a prompt with initial version
 initial_prompt = """You are a helpful assistant."""
 
-# Create the prompt in Langfuse (run once)
+# Create the prompt in Langfuse (run ONCE - the first time only!)
 try:
-    prompt = langfuse.prompts.create(
+    prompt = langfuse.create_prompt(
         name="versioned-prompt",
         prompt=initial_prompt,
-        description="Initial version of assistant prompt"
+        labels=["v1"]
     )
-    print(f"Created prompt: {prompt.name} (v{prompt.version})")
+    print(f"Created prompt: {prompt.name}")
 except Exception as e:
     print(f"Prompt might already exist: {e}")
 
@@ -37,32 +37,24 @@ except Exception as e:
 updated_prompt_text = """You are a helpful assistant specialized in coding.
 Always provide code examples when possible."""
 
+# Note: In newer Langfuse API, use create_ to add new versions with labels
 try:
-    updated = langfuse.prompts.update(
+    updated = langfuse.create_prompt(
         name="versioned-prompt",
         prompt=updated_prompt_text,
-        description="Added coding specialization"
+        labels=["v2"]
     )
-    print(f"Updated prompt: {updated.name} (v{updated.version})")
+    print(f"Updated prompt: {updated.name}")
 except Exception as e:
     print(f"Update failed: {e}")
 
-# Get all versions
+# Get all versions - use get_prompt with labels
 try:
-    versions = langfuse.prompts.get_many(name="versioned-prompt")
-    print(f"\nAll versions of 'versioned-prompt':")
-    for v in versions.data:
-        print(f"  - Version {v.version}: {v.prompt[:50]}...")
-except Exception as e:
-    print(f"Error getting versions: {e}")
+    v1 = langfuse.get_prompt("versioned-prompt", label="v1")
+    print(f"\nVersion v1 content: {v1.prompt}")
 
-# Get specific version
-try:
-    v1 = langfuse.prompts.get("versioned-prompt", version=1)
-    print(f"\nVersion 1 content: {v1.prompt}")
-
-    v2 = langfuse.prompts.get("versioned-prompt", version=2)
-    print(f"Version 2 content: {v2.prompt}")
+    v2 = langfuse.get_prompt("versioned-prompt", label="v2")
+    print(f"Version v2 content: {v2.prompt}")
 except Exception as e:
     print(f"Error: {e}")
     print("\nTo test versioning: Create prompts in Langfuse UI")
