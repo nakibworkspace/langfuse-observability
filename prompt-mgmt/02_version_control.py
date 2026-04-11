@@ -1,24 +1,17 @@
-"""Lab 2: Version Control
-
-Learn how Langfuse handles prompt versioning.
-Langfuse automatically versions your prompts when you update them,
-allowing you to track changes over time and roll back if needed.
-"""
 import os
 from dotenv import load_dotenv
-
 load_dotenv()
 
+# Set env vars before importing langfuse.openai
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 os.environ["OPENAI_API_BASE"] = os.getenv("OPENAI_BASE_URL")
-os.environ["LANGFUSE_PUBLIC_KEY"] = os.getenv("LANGFUSE_PUBLIC_KEY")
-os.environ["LANGFUSE_SECRET_KEY"] = os.getenv("LANGFUSE_SECRET_KEY")
-os.environ["LANGFUSE_BASE_URL"] = os.getenv("LANGFUSE_BASE_URL")
 
-from langfuse import Langfuse
+from langfuse import Langfuse, propagate_attributes, get_client, observe
+from langfuse.openai import OpenAI
 
 langfuse = Langfuse()
 
+<<<<<<< HEAD
 # Create a prompt with initial version
 initial_prompt = """You are a helpful assistant."""
 
@@ -58,3 +51,30 @@ try:
 except Exception as e:
     print(f"Error: {e}")
     print("\nTo test versioning: Create prompts in Langfuse UI")
+=======
+prompt = langfuse.get_prompt("movie-critic", label="prod-1")
+
+compiled = prompt.compile(movie="SpiderMan", criticlevel="novice")
+
+@observe()
+def run_app():
+    with propagate_attributes(
+        trace_name="critic-task-v1",
+        session_id="nakib-123",
+        tags=["testing", "minimax"],
+        metadata={"env": "local", "version": "4.0.6"}
+    ):
+    
+        client = OpenAI()
+
+        completion = client.chat.completions.create(
+            model="MiniMax-M2.5",
+            messages=[{"role": "user", "content": compiled}],
+            langfuse_prompt=prompt # 4. LINK the prompt version to this trace
+        )
+        return completion.choices[0].message.content
+
+if __name__ == "__main__":
+    print(run_app())
+    get_client().flush() # v4 uses get_client() to flush the buffer
+>>>>>>> 930c1c2e3566e9b179420446876cd2a188271b6c
