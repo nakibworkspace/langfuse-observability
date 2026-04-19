@@ -1,5 +1,5 @@
 # annotate.py
-import json
+import re, json
 import os
 from langfuse import Langfuse  # Standard v4 init
 from openai import OpenAI
@@ -22,8 +22,23 @@ Question: {q}
 Response: {r}
 Reference: {ref}
 
-Return ONLY JSON: {{"score": 0.0 to 1.0, "reason": "short explanation"}}
+IMPORTANT: 
+- Do NOT think out loud. Do NOT use <think> tags.
+- Return ONLY valid JSON, nothing else.
+- Format: {{"score": 0.0 to 1.0, "reason": "one short sentence"}}
+- Example: {{"score": 1.0, "reason": "Correct answer"}}
 """
+
+def clean_judge_output(text):
+    """Remove <think>...</think> tags and extract JSON"""
+    # Strip thinking blocks
+    text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
+    
+    # Try to find JSON object in remaining text
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if match:
+        return match.group()
+    return text
 
 def run_judge(question, response, reference):
     prompt = JUDGE_PROMPT.format(q=question, r=response, ref=reference)
@@ -31,16 +46,19 @@ def run_judge(question, response, reference):
         model="MiniMax-M2.5",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.0,
-        max_tokens=200
+        max_tokens=300
     )
-    text = res.choices[0].message.content.strip()
+    raw = res.choices[0].message.content.strip()
+
+    cleaned = clean_judge_output(raw)
+
     try:
-        return json.loads(text)
+        return json.loads(cleaned)
     except Exception as e:
         return {"score": 0.5, "reason": f"Parse error: {str(e)[:50]}"}
 
 # ============ CONFIG ============
-TEST_MODE = True  # Force routing for testing
+TEST_MODE = False  # Force routing for testing
 # ================================
 
 QUESTION = "What is the capital of France?"
