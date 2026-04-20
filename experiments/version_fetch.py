@@ -8,7 +8,7 @@ load_dotenv()
 langfuse = Langfuse()
 
 # Fetch as of a specific timestamp
-version_ts = datetime(2026, 4, 19, 21, 28, 46, tzinfo=timezone.utc)
+version_ts = datetime(2026, 4, 20, 14, 52, 4, tzinfo=timezone.utc)
 dataset = langfuse.get_dataset(
     name="customer-support-test",
     version=version_ts  # Optional: omit for latest

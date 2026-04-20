@@ -10,10 +10,27 @@ langfuse = Langfuse(
     host=os.getenv("LANGFUSE_HOST", "http://localhost:3001")
 )
 
-langfuse.create_dataset_item(
-    dataset_name="customer-support-test",
-    input={"query": "My order is late"},
-    expected_output="I apologize. Let me check your order status. Can you provide your order ID?",
-    source_trace_id="your-production-trace-id",  # Links back to original trace
-    metadata={"source": "production", "flagged": True}
-)
+# Add more items to the dataset
+production_items = [
+    {
+        "input": {"query": "How do I track my package?"},
+        "expected_output": "You can track your package using the tracking link in your confirmation email.",
+        "metadata": {"category": "shipping", "difficulty": "easy", "source": "production"}
+    },
+    {
+        "input": {"query": "I was charged twice for my order"},
+        "expected_output": "I apologize for the duplicate charge. Let me verify and process an immediate refund.",
+        "metadata": {"category": "billing", "difficulty": "hard", "source": "production"}
+    }
+]
+
+for item_data in production_items:
+    langfuse.create_dataset_item(
+        dataset_name="customer-support-test",
+        input=item_data["input"],
+        expected_output=item_data["expected_output"],
+        metadata=item_data["metadata"]
+    )
+    print(f"Added: {item_data['input']['query']}")
+
+print(f"\nTotal items now: {len(production_items) + 4}")

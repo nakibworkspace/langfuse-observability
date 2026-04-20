@@ -31,7 +31,7 @@ result = dataset.run_experiment(
     description="First baseline run with scoring",
     task=my_support_bot,
     evaluators=[exact_match_evaluator],  # ← Pass evaluator here
-    metadata={"model": "llama3.2", "prompt_version": "v1.0"}
+    metadata={"model": "minimax-m2.5", "prompt_version": "v1.0"}
 )
 
 # 4. Print results
